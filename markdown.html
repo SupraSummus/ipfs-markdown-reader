@@ -4,10 +4,8 @@
     <head>
         <title>Loading...</title>
 
-        <!-- jquery.min.js v2.1.1 -->
-        <script src="/ipfs/QmR5VbjNbeg6gPLVnKX4YgHPf4e6EKodcGQhkuVv2RKWuJ"></script>
-        <!-- showdown.min.js 15-03-2017 -->
-        <script src="/ipfs/Qmbdd86BinDdojXmHifkBTAnZbB1wnNwRGVzDDxoSm3v16"></script>
+        <!-- loader -->
+        <script src="/ipfs/QmNMcpdYsmGhYbNxNpajqd28R3V8G7mv3kQSC1BPJt1EaS"></script>
     </head>
 
     <body>
@@ -16,102 +14,74 @@
 
     <script>
 
-var joinPaths = function (a, b) {
-    var splitPath = function (path, keepFile) {
-        var elements = [];
-        var element = [];
-        var escaped = false;
-        for (var i = 0; i < path.length; i ++) {
-            element.push(path[i]);
-            if (path[i] == '/' && !escaped) {
-                elements.push(element.join(''));
-                element = [];
-            }
-            escaped = (path[i] == '\\') && !escaped;
-        }
-        if (keepFile) {
-            elements.push(element.join(''));
-        }
-        return elements;
-    };
+load('/ipfs/QmbwGcgtz1q6qAXoAoxLHQcdyGhsaAiCNfVoaDTc3o5mBM', function (loadMany) {
+    loadMany([
+        '/ipfs/QmR5VbjNbeg6gPLVnKX4YgHPf4e6EKodcGQhkuVv2RKWuJ', // jquery.min.js v2.1.1
+        '/ipfs/QmPPpjCH5uE1rAcThKwqoxUh17zDYfTHhrp5eFjMQC8NK2', // showdown.min.js 15-03-2017
+        '/ipfs/QmbmuMm3caGNH1mSqXJpkJsW4temL23AtLnzqKGT2fYvVi', // joinPaths
+    ], function (notWorking$, showdown, joinPaths) {
 
-    if (b.startsWith('/')) {
-        return b;
-    }
+        var looksLikeURL = function (ref) {
+            return !!ref.match(/^[a-zA-Z]+:/);
+        };
 
-    var elements = splitPath(a, false);
-    splitPath(b, true).forEach(function (part) {
-        if (part == './') {
-        } else if (part == '../') {
-            if (elements.pop() == undefined) {
-                elements.push(part);
-            }
+        var render = function (path) {
+            $.get(path, function (data) {
+                // generate and display HTML
+                var converter = new showdown.Converter();
+                var html = converter.makeHtml(data);
+                document.getElementsByTagName('body')[0].innerHTML = html;
+
+                // fix relative links
+                document.querySelectorAll('a').forEach(function (link) {
+                    var href = link.getAttribute('href');
+                    if (!looksLikeURL(href)) {
+                        link.setAttribute('href', joinPaths(path, href));
+                    }
+                });
+
+                // fix relative images
+                document.querySelectorAll('img').forEach(function (img) {
+                    var src = img.getAttribute('src');
+                    if (!looksLikeURL(src)) {
+                        img.setAttribute('src', joinPaths(path, src));
+                    }
+                });
+
+                // fix links to MD files
+                document.querySelectorAll('a[href^="md:"]').forEach(function (link) {
+                    link.setAttribute('href', '#' + joinPaths(
+                        path,
+                        link.getAttribute('href').substring('md:'.length)
+                    ));
+                });
+
+                // set window title to first h1 or h2 in markdown text
+                titleElement = document.querySelector('h1, h2');
+                if (titleElement == null) {
+                    document.title = "Markdown document";
+                } else {
+                    document.title = titleElement.textContent;
+                }
+
+            });
+        };
+
+        var hash = window.location.hash.substring(1);
+        if (hash.length > 0) {
+            render(hash);
         } else {
-            elements.push(part);
+            // redirect to readme
+            window.location.hash = '#/ipfs/QmZChWmP8PBdQsho59hYQVhmMPRed5HPxRUP2aZu8NAZSG';
+            window.location.reload();
         }
-    });
 
-    return elements.join('');
-};
-
-var looksLikeURL = function (ref) {
-    return !!ref.match(/^[a-zA-Z]+:/);
-};
-
-var render = function (path) {
-    $.get(path, function (data) {
-        // generate and display HTML
-        var converter = new showdown.Converter();
-        var html = converter.makeHtml(data);
-        document.getElementsByTagName('body')[0].innerHTML = html;
-
-        // fix relative links
-        document.querySelectorAll('a').forEach(function (link) {
-            var href = link.getAttribute('href');
-            if (!looksLikeURL(href)) {
-                link.setAttribute('href', joinPaths(path, href));
-            }
-        });
-
-        // fix relative images
-        document.querySelectorAll('img').forEach(function (img) {
-            var src = img.getAttribute('src');
-            if (!looksLikeURL(src)) {
-                img.setAttribute('src', joinPaths(path, src));
-            }
-        });
-
-        // fix links to MD files
-        document.querySelectorAll('a[href^="md:"]').forEach(function (link) {
-            link.setAttribute('href', '#' + joinPaths(
-                path,
-                link.getAttribute('href').substring('md:'.length)
-            ));
-        });
-
-        // set window title to first h1 or h2 in markdown text
-        titleElement = document.querySelector('h1, h2');
-        if (titleElement == null) {
-            document.title = "Markdown document";
-        } else {
-            document.title = titleElement.textContent;
-        }
+        window.onhashchange = function(){
+            window.location.reload();
+        };
 
     });
-};
-
-var hash = window.location.hash.substring(1);
-if (hash.length > 0) {
-    render(hash);
-} else {
-    // redirect to readme
-    window.location.hash = '#/ipfs/QmZChWmP8PBdQsho59hYQVhmMPRed5HPxRUP2aZu8NAZSG';
-    window.location.reload();
-}
-
-window.onhashchange = function(){
-    window.location.reload();
-};
+});
 
     </script>
 
