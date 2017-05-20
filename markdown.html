@@ -5,7 +5,7 @@
         <title>Loading...</title>
 
         <!-- loader -->
-        <script src="/ipfs/QmNMcpdYsmGhYbNxNpajqd28R3V8G7mv3kQSC1BPJt1EaS"></script>
+        <script src="/ipfs/{{load_js}}"></script>
     </head>
 
     <body>
@@ -14,11 +14,11 @@
 
     <script>
 
-load('/ipfs/QmbwGcgtz1q6qAXoAoxLHQcdyGhsaAiCNfVoaDTc3o5mBM', function (loadMany) {
+load('/ipfs/{{load_many}}', function (loadMany) {
     loadMany([
-        '/ipfs/QmR5VbjNbeg6gPLVnKX4YgHPf4e6EKodcGQhkuVv2RKWuJ', // jquery.min.js v2.1.1
-        '/ipfs/QmPPpjCH5uE1rAcThKwqoxUh17zDYfTHhrp5eFjMQC8NK2', // showdown.min.js 15-03-2017
-        '/ipfs/QmbmuMm3caGNH1mSqXJpkJsW4temL23AtLnzqKGT2fYvVi', // joinPaths
+        '/ipfs/{{jquery}}',
+        '/ipfs/{{showdown}}',
+        '/ipfs/{{join_paths}}',
     ], function (notWorking$, showdown, joinPaths) {
 
         var looksLikeURL = function (ref) {
@@ -72,7 +72,7 @@ load('/ipfs/QmbwGcgtz1q6qAXoAoxLHQcdyGhsaAiCNfVoaDTc3o5mBM', function (loadMany)
             render(hash);
         } else {
             // redirect to readme
-            window.location.hash = '#/ipfs/QmZChWmP8PBdQsho59hYQVhmMPRed5HPxRUP2aZu8NAZSG';
+            window.location.hash = '#/ipfs/{{readme}}';
             window.location.reload();
         }
 

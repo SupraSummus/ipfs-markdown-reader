@@ -1,0 +1,17 @@
+{
+    "sources": {
+        "markdown.html": {
+            "{{load_js}}": {"type": "const", "value": "QmfNGp6njJptZX22NDQge1UZTSHh2oxmQx6S6Sz1i3Fnv6"},
+            "{{load_many}}": {"type": "const", "value": "QmeaWRTzVRvJbaZ7eTaCX5vBU2snG1P4yA3CeTYFshHEuD"},
+            "{{join_paths}}": {"type": "ref", "source": "join_paths.js"},
+            "{{showdown}}": {"type": "ref", "source": "showdown.min.js"},
+            "{{jquery}}": {"type": "ref", "source": "jquery.min.js"},
+            "{{readme}}": {"type": "ref", "source": "README.md"}
+        },
+        "README.md": {
+            "{{md_links}}": {"type": "ref", "source": "markdown_extension.md"},
+            "{{example_page}}": {"type": "ref", "source": "example_page"}
+        }
+    },
+    "targets": ["markdown.html"]
+}
